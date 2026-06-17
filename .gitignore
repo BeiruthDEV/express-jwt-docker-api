@@ -1,0 +1,10 @@
+CODEX.md
+CLAUDE.md
+codex.md
+claude.md
+node_modules
+.env
+coverage
+*.log
+.DS_Store
+assets/
