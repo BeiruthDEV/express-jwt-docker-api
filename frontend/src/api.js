@@ -46,6 +46,12 @@ async function request(path, { method = 'GET', body, auth = true } = {}) {
 export const api = {
   login: (email, password) => request('/auth/login', { method: 'POST', body: { email, password }, auth: false }),
   register: (payload) => request('/auth/register', { method: 'POST', body: payload, auth: false }),
+  forgotPassword: (email, newPassword, confirmPassword) =>
+    request('/auth/forgot-password', {
+      method: 'POST',
+      body: { email, newPassword, confirmPassword },
+      auth: false,
+    }),
   list: (resource) => request(`/${resource}`),
   create: (resource, body) => request(`/${resource}`, { method: 'POST', body }),
   update: (resource, id, body) => request(`/${resource}/${id}`, { method: 'PUT', body }),

@@ -1,9 +1,10 @@
 import CrudPage from '../components/CrudPage';
+import Badge from '../components/Badge';
 
 const columns = [
-  { key: 'name', label: 'Nome' },
+  { key: 'name', label: 'Nome', render: (row) => <span className="font-extrabold">{row.name}</span> },
   { key: 'email', label: 'E-mail' },
-  { key: 'role', label: 'Perfil' },
+  { key: 'role', label: 'Perfil', render: (row) => <Badge tone={row.role === 'ADMIN' ? 'teal' : 'slate'}>{row.role}</Badge> },
   {
     key: 'created_at',
     label: 'Criado em',
@@ -34,6 +35,7 @@ export default function Users() {
       description="CRUD administrativo de usuarios no PostgreSQL. Apenas ADMIN acessa esta tela."
       columns={columns}
       fields={fields}
+      filterConfig={{ label: 'Perfil', field: 'role', options: ['USER', 'ADMIN'] }}
     />
   );
 }
