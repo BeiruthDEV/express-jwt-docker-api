@@ -36,9 +36,10 @@ router.get('/', async (_req, res) => {
 
 router.post(
   '/',
-  body('brand').isString().notEmpty(),
-  body('model').isString().notEmpty(),
-  body('year').isInt(),
+  body('brand').isString().trim().notEmpty().withMessage('brand obrigatorio'),
+  body('model').isString().trim().notEmpty().withMessage('model obrigatorio'),
+  body('year').isInt({ min: 2015, max: 2026 }).withMessage('year deve ser inteiro entre 2015 e 2026'),
+  body('cc').optional().isInt({ min: 50, max: 2500 }).withMessage('cc deve ser inteiro entre 50 e 2500'),
   validate,
   async (req, res) => {
     const moto = await Moto.create(req.body);
@@ -83,11 +84,19 @@ router.get('/:id', async (req, res) => {
   res.json(moto);
 });
 
-router.put('/:id', async (req, res) => {
-  const moto = await Moto.findByIdAndUpdate(req.params.id, req.body, { new: true }).catch(() => null);
-  if (!moto) return res.status(404).json({ error: 'Not found' });
-  res.json(moto);
-});
+router.put(
+  '/:id',
+  body('brand').optional().isString().trim().notEmpty(),
+  body('model').optional().isString().trim().notEmpty(),
+  body('year').optional().isInt({ min: 2015, max: 2026 }),
+  body('cc').optional().isInt({ min: 50, max: 2500 }),
+  validate,
+  async (req, res) => {
+    const moto = await Moto.findByIdAndUpdate(req.params.id, req.body, { new: true }).catch(() => null);
+    if (!moto) return res.status(404).json({ error: 'Not found' });
+    res.json(moto);
+  }
+);
 
 router.delete('/:id', async (req, res) => {
   const moto = await Moto.findByIdAndDelete(req.params.id).catch(() => null);

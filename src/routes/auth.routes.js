@@ -84,4 +84,54 @@ router.post(
   }
 );
 
+/**
+ * @openapi
+ * /auth/forgot-password:
+ *   post:
+ *     tags: [Auth]
+ *     summary: Reset password directly with email and new password
+ *     description: Simplified academic flow. In production, use a temporary token sent by email.
+ *     security: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               email: { type: string }
+ *               newPassword: { type: string, minLength: 6 }
+ *               confirmPassword: { type: string, minLength: 6 }
+ *     responses:
+ *       200: { description: Password updated }
+ *       400: { description: Validation error }
+ *       404: { description: User not found }
+ */
+// Fluxo simplificado para fins academicos. Em producao, o correto seria usar
+// token temporario enviado por e-mail.
+router.post(
+  '/forgot-password',
+  body('email').isEmail().withMessage('E-mail invalido'),
+  body('newPassword').isLength({ min: 6 }).withMessage('Nova senha precisa de no minimo 6 caracteres'),
+  body('confirmPassword').isLength({ min: 6 }).withMessage('Confirmacao precisa de no minimo 6 caracteres'),
+  validate,
+  async (req, res) => {
+    const { email, newPassword, confirmPassword } = req.body;
+
+    if (newPassword !== confirmPassword) {
+      return res.status(400).json({ error: 'As senhas nao coincidem.' });
+    }
+
+    const found = await pool.query('SELECT id FROM users WHERE email = $1', [email]);
+    if (!found.rows.length) {
+      return res.status(404).json({ error: 'Usuario nao encontrado.' });
+    }
+
+    const hash = await bcrypt.hash(newPassword, 10);
+    await pool.query('UPDATE users SET password = $1 WHERE email = $2 RETURNING id, email', [hash, email]);
+
+    return res.json({ message: 'Senha atualizada com sucesso.' });
+  }
+);
+
 module.exports = router;

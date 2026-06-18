@@ -13,7 +13,25 @@ const { setupSwagger } = require('./swagger');
 const app = express();
 
 app.use(helmet());
-app.use(cors());
+
+const allowedOrigins = (process.env.CORS_ORIGIN || 'http://localhost:5173,http://localhost:3000')
+  .split(',')
+  .map((origin) => origin.trim())
+  .filter(Boolean);
+
+app.use(
+  cors({
+    origin(origin, callback) {
+      if (!origin) return callback(null, true);
+      if (allowedOrigins.includes('*') || allowedOrigins.includes(origin)) {
+        return callback(null, true);
+      }
+      return callback(new Error('Origin not allowed by CORS'));
+    },
+    credentials: true,
+  })
+);
+
 app.use(express.json({ limit: '100kb' }));
 
 const limiter = rateLimit({

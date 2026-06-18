@@ -35,7 +35,9 @@ router.get('/', async (_req, res) => {
 
 router.post(
   '/',
-  body('name').isString().notEmpty(),
+  body('name').isString().trim().notEmpty().withMessage('name obrigatorio'),
+  body('country').isString().trim().notEmpty().withMessage('country obrigatorio'),
+  body('foundedYear').optional().isInt({ min: 1800, max: 2026 }).withMessage('foundedYear deve ser inteiro entre 1800 e 2026'),
   validate,
   async (req, res) => {
     const brand = await ClothingBrand.create(req.body);
@@ -80,11 +82,18 @@ router.get('/:id', async (req, res) => {
   res.json(brand);
 });
 
-router.put('/:id', async (req, res) => {
-  const brand = await ClothingBrand.findByIdAndUpdate(req.params.id, req.body, { new: true }).catch(() => null);
-  if (!brand) return res.status(404).json({ error: 'Not found' });
-  res.json(brand);
-});
+router.put(
+  '/:id',
+  body('name').optional().isString().trim().notEmpty(),
+  body('country').optional().isString().trim().notEmpty(),
+  body('foundedYear').optional().isInt({ min: 1800, max: 2026 }),
+  validate,
+  async (req, res) => {
+    const brand = await ClothingBrand.findByIdAndUpdate(req.params.id, req.body, { new: true }).catch(() => null);
+    if (!brand) return res.status(404).json({ error: 'Not found' });
+    res.json(brand);
+  }
+);
 
 router.delete('/:id', async (req, res) => {
   const brand = await ClothingBrand.findByIdAndDelete(req.params.id).catch(() => null);
