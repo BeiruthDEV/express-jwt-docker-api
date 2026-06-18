@@ -34,6 +34,12 @@ app.use('/cars', carsRoutes);
 app.use('/motos', motosRoutes);
 app.use('/clothing-brands', clothingBrandsRoutes);
 
+app.use('/api/auth', authRoutes);
+app.use('/api/users', usersRoutes);
+app.use('/api/cars', carsRoutes);
+app.use('/api/motos', motosRoutes);
+app.use('/api/clothing-brands', clothingBrandsRoutes);
+
 app.use((err, _req, res, _next) => {
   console.error(err);
   res.status(500).json({ error: 'Internal server error' });

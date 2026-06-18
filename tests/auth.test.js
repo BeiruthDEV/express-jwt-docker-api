@@ -26,6 +26,19 @@ describe('Auth', () => {
     expect(login.body.token).toBeDefined();
   });
 
+  test('api prefix login returns token', async () => {
+    await request(app)
+      .post('/api/auth/register')
+      .send({ name: 'Api User', email: 'api@a.com', password: '123456' });
+
+    const login = await request(app)
+      .post('/api/auth/login')
+      .send({ email: 'api@a.com', password: '123456' });
+
+    expect(login.status).toBe(200);
+    expect(login.body.token).toBeDefined();
+  });
+
   test('login invalid', async () => {
     const r = await request(app)
       .post('/auth/login')

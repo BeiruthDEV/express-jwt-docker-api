@@ -25,6 +25,38 @@ router.get('/', async (_req, res) => {
 
 /**
  * @openapi
+ * /users:
+ *   post:
+ *     tags: [Users]
+ *     summary: Create user (ADMIN)
+ *     responses:
+ *       201: { description: Created }
+ */
+router.post(
+  '/',
+  body('name').isString().notEmpty(),
+  body('email').isEmail(),
+  body('password').isLength({ min: 6 }),
+  body('role').optional().isIn(['USER', 'ADMIN']),
+  validate,
+  async (req, res) => {
+    const { name, email, password, role } = req.body;
+    const hash = await bcrypt.hash(password, 10);
+    try {
+      const result = await pool.query(
+        'INSERT INTO users (name, email, password, role) VALUES ($1, $2, $3, $4) RETURNING id, name, email, role, created_at',
+        [name, email, hash, role === 'ADMIN' ? 'ADMIN' : 'USER']
+      );
+      res.status(201).json(result.rows[0]);
+    } catch (err) {
+      if (err.code === '23505') return res.status(409).json({ error: 'Email already used' });
+      throw err;
+    }
+  }
+);
+
+/**
+ * @openapi
  * /users/{id}:
  *   get:
  *     tags: [Users]

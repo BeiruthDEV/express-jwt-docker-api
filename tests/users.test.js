@@ -47,6 +47,16 @@ describe('Users', () => {
     expect(r.body.email).toBe('target@a.com');
   });
 
+  test('admin creates user', async () => {
+    const r = await request(app)
+      .post('/api/users')
+      .set('Authorization', `Bearer ${adminToken}`)
+      .send({ name: 'Created Admin', email: 'created-admin@a.com', password: '123456', role: 'USER' });
+
+    expect(r.status).toBe(201);
+    expect(r.body.email).toBe('created-admin@a.com');
+  });
+
   test('admin updates user', async () => {
     const r = await request(app)
       .put(`/users/${createdUserId}`)
