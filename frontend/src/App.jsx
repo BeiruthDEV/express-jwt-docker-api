@@ -6,10 +6,19 @@ import Cars from './pages/Cars';
 import Motos from './pages/Motos';
 import ClothingBrands from './pages/ClothingBrands';
 import Users from './pages/Users';
+import Settings from './pages/Settings';
+import { getBrandLogoUrl } from './utils/brandLogos';
+
+if (import.meta.env.DEV) {
+  const url = getBrandLogoUrl('Toyota');
+  const masked = url ? url.replace(/token=([^&]+)/, (_, t) => `token=${t.slice(0, 5)}…(${t.length})`) : null;
+  // eslint-disable-next-line no-console
+  console.log('[logo.dev] hasToken:', Boolean(import.meta.env.VITE_LOGO_DEV_TOKEN), 'sampleUrl:', masked);
+}
 
 export default function App() {
   return (
-    <div className="min-h-screen bg-canvas">
+    <div className="min-h-screen">
       <Routes>
         <Route path="/login" element={<Login />} />
         <Route
@@ -49,6 +58,14 @@ export default function App() {
           element={
             <ProtectedRoute adminOnly>
               <Users />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/settings"
+          element={
+            <ProtectedRoute>
+              <Settings />
             </ProtectedRoute>
           }
         />
