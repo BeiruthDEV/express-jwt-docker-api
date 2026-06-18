@@ -17,3 +17,8 @@
 | 13 | Existem testes de integracao com Jest e Supertest para todos os recursos. | Atendido | `tests/*.test.js`, `tests/setup.js` |
 | 14 | Existe .env.example. | Atendido | `.env.example` |
 | 15 | README explica como rodar via Docker e prova que os requisitos foram atendidos. | Atendido | `README.md`, `CHECKLIST_ENTREGA.md` |
+| 16 | Frontend em React com Vite. | Atendido | `frontend/src/App.jsx`, `frontend/package.json` |
+| 17 | Frontend estilizado com Tailwind CSS. | Atendido | `frontend/tailwind.config.js`, `frontend/src/index.css` |
+| 18 | Frontend consome o backend com JWT. | Atendido | `frontend/src/api.js`, `frontend/src/auth.js` |
+| 19 | Telas de login, dashboard e CRUDs. | Atendido | `frontend/src/pages/` |
+| 20 | Frontend roda via Docker Compose. | Atendido | `frontend/Dockerfile`, `docker-compose.yml` |
