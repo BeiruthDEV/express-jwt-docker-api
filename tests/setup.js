@@ -73,6 +73,15 @@ function makePostgresMock() {
         return { rows: user ? [withoutPassword(user)] : [] };
       }
 
+      if (text.startsWith('update users set password = $1 where email = $2')) {
+        const email = params[1];
+        const user = [...users.values()].find((u) => u.email === email);
+        if (!user) return { rows: [] };
+        user.password = params[0];
+        users.set(user.id, user);
+        return { rows: [{ id: user.id, email: user.email }] };
+      }
+
       if (text.startsWith('update users')) {
         const id = Number(params[4]);
         const user = users.get(id);

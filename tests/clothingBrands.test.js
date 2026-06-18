@@ -56,4 +56,27 @@ describe('ClothingBrands CRUD', () => {
     const r = await request(app).delete(`/clothing-brands/${id}`).set('Authorization', `Bearer ${token}`);
     expect(r.status).toBe(204);
   });
+
+  describe('Validacao backend', () => {
+    test('reject create without name', async () => {
+      const r = await request(app)
+        .post('/clothing-brands')
+        .set('Authorization', `Bearer ${token}`)
+        .send({ country: 'USA' });
+      expect(r.status).toBe(400);
+    });
+
+    test('reject create without country', async () => {
+      const r = await request(app)
+        .post('/clothing-brands')
+        .set('Authorization', `Bearer ${token}`)
+        .send({ name: 'Nike' });
+      expect(r.status).toBe(400);
+    });
+
+    test('reject access without token', async () => {
+      const r = await request(app).get('/clothing-brands');
+      expect(r.status).toBe(401);
+    });
+  });
 });

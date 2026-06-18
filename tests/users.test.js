@@ -34,6 +34,14 @@ describe('Users', () => {
     const r = await request(app).get('/users').set('Authorization', `Bearer ${adminToken}`);
     expect(r.status).toBe(200);
     expect(Array.isArray(r.body)).toBe(true);
+    for (const user of r.body) {
+      expect(user).not.toHaveProperty('password');
+    }
+  });
+
+  test('rejected with invalid token', async () => {
+    const r = await request(app).get('/users').set('Authorization', 'Bearer not-a-real-token');
+    expect(r.status).toBe(401);
   });
 
   test('admin gets user by id', async () => {

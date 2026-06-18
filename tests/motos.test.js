@@ -56,4 +56,19 @@ describe('Motos CRUD', () => {
     const r = await request(app).delete(`/motos/${id}`).set('Authorization', `Bearer ${token}`);
     expect(r.status).toBe(204);
   });
+
+  describe('Validacao backend', () => {
+    test('reject create without required fields', async () => {
+      const r = await request(app)
+        .post('/motos')
+        .set('Authorization', `Bearer ${token}`)
+        .send({});
+      expect(r.status).toBe(400);
+    });
+
+    test('reject access without token', async () => {
+      const r = await request(app).get('/motos');
+      expect(r.status).toBe(401);
+    });
+  });
 });

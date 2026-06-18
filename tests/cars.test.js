@@ -61,4 +61,30 @@ describe('Cars CRUD', () => {
     const r = await request(app).delete(`/cars/${id}`).set('Authorization', `Bearer ${token}`);
     expect(r.status).toBe(204);
   });
+
+  describe('Validacao backend', () => {
+    test('reject create without required fields', async () => {
+      const r = await request(app)
+        .post('/cars')
+        .set('Authorization', `Bearer ${token}`)
+        .send({});
+      expect(r.status).toBe(400);
+    });
+
+    test('reject create with year out of range', async () => {
+      const r = await request(app)
+        .post('/cars')
+        .set('Authorization', `Bearer ${token}`)
+        .send({ brand: 'Ford', model: 'Ka', year: 1990, color: 'red' });
+      expect(r.status).toBe(400);
+    });
+
+    test('reject create with invalid token', async () => {
+      const r = await request(app)
+        .post('/cars')
+        .set('Authorization', 'Bearer not-a-real-token')
+        .send({ brand: 'Ford', model: 'Ka', year: 2020, color: 'red' });
+      expect(r.status).toBe(401);
+    });
+  });
 });
