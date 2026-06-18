@@ -11,6 +11,7 @@ services:
       - JWT_EXPIRES_IN=${JWT_EXPIRES_IN}
       - MONGO_URI=${MONGO_URI}
       - DATABASE_URL=${DATABASE_URL}
+      - CORS_ORIGIN=${CORS_ORIGIN}
     depends_on:
       mongo:
         condition: service_healthy
@@ -47,12 +48,17 @@ services:
       retries: 10
 
   frontend:
-    build: ./frontend
+    build:
+      context: ./frontend
+      args:
+        VITE_API_URL: http://localhost:3000
+        VITE_LOGO_DEV_TOKEN: ${VITE_LOGO_DEV_TOKEN}
     container_name: frontend
     ports:
       - "5173:5173"
     environment:
       - VITE_API_URL=http://localhost:3000
+      - VITE_LOGO_DEV_TOKEN=${VITE_LOGO_DEV_TOKEN}
     depends_on:
       - api
 
